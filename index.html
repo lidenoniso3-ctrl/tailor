@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Couture Calc – Calculs de Couture</title>
+
+  <link rel="stylesheet" href="./style.css">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#9b59b6">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+</head>
+<body>
+
+  <!-- Écran d'installation (affiché en premier) -->
+  <div id="install-screen">
+    <div class="app-icon">🧵</div>
+    <h1>Couture Calc</h1>
+    <p>Installez l'application pour calculer vos métrages et patrons hors ligne, comme une vraie application.</p>
+    
+    <button id="btnInstallPWA" class="btn-install-main" style="display: none;">
+      ⬇️ Installer l'application
+    </button>
+
+    <div id="ios-instruction" class="ios-instruction">
+      <strong>Sur iPhone :</strong><br>
+      Appuyez sur <b>Partager</b> (Share), puis choisissez <b>« Sur l'écran d'accueil »</b>.
+    </div>
+
+    <button id="btnSkipInstall" class="btn-skip">Ou utiliser directement dans le navigateur</button>
+  </div>
+
+  <!-- Interface principale -->
+  <div id="app-wrapper" style="display: none;">
+    <header class="app-header">
+      <h1>🧵 Couture Calc</h1>
+      <p>Calculateurs professionnels pour la couture et le prêt-à-porter</p>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="metrage">Métrage</button>
+      <button class="tab-btn" data-tab="jupe">Jupe cercle</button>
+      <button class="tab-btn" data-tab="biais">Biais</button>
+      <button class="tab-btn" data-tab="plis">Plis</button>
+      <button class="tab-btn" data-tab="doublure">Doublure</button>
+      <button class="tab-btn" data-tab="mesures">Mesures</button>
+    </nav>
+
+    <main class="tab-content">
+
+      <!-- Onglet Métrage -->
+      <section id="tab-metrage" class="tab-panel active">
+        <h2>Calcul du métrage de tissu</h2>
+        <p class="hint">Estimez la quantité de tissu nécessaire selon le vêtement et la largeur (laize).</p>
+        <div class="form-group">
+          <label>Type de vêtement</label>
+          <select id="metrage-type">
+            <option value="robe">Robe / Haut</option>
+            <option value="jupe">Jupe</option>
+            <option value="pantalon">Pantalon</option>
+            <option value="veste">Veste / Manteau</option>
+            <option value="chemise">Chemise / Chemisier</option>
+            <option value="rideau">Rideau (par panneau)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Largeur du tissu (laize) en cm</label>
+          <input type="number" id="metrage-laize" value="140" min="80" max="200">
+        </div>
+        <div class="form-group">
+          <label>Marge de sécurité (%)</label>
+          <input type="number" id="metrage-marge" value="10" min="0" max="50">
+        </div>
+        <div class="form-group checkbox-group">
+          <label><input type="checkbox" id="metrage-raccord"> Motif à raccorder (+10%)</label>
+        </div>
+        <button class="btn" id="btn-calc-metrage">Calculer le métrage</button>
+        <div id="result-metrage" class="result-box"></div>
+      </section>
+
+      <!-- Onglet Jupe cercle -->
+      <section id="tab-jupe" class="tab-panel">
+        <h2>Jupe circulaire</h2>
+        <p class="hint">Calculez les rayons et le métrage pour une jupe cercle, demi-cercle, 3/4 ou quart.</p>
+        <div class="form-group">
+          <label>Type de jupe</label>
+          <select id="jupe-type">
+            <option value="1">Cercle complet (360°)</option>
+            <option value="0.75">3/4 de cercle (270°)</option>
+            <option value="0.5" selected>Demi-cercle (180°)</option>
+            <option value="0.25">Quart de cercle (90°)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tour de taille (cm)</label>
+          <input type="number" id="jupe-taille" value="70">
+        </div>
+        <div class="form-group">
+          <label>Aisance (cm)</label>
+          <input type="number" id="jupe-aisance" value="2">
+        </div>
+        <div class="form-group">
+          <label>Longueur de la jupe (cm)</label>
+          <input type="number" id="jupe-longueur" value="50">
+        </div>
+        <div class="form-group">
+          <label>Ourlet + marges (cm)</label>
+          <input type="number" id="jupe-ourlet" value="3">
+        </div>
+        <button class="btn" id="btn-calc-jupe">Calculer</button>
+        <div id="result-jupe" class="result-box"></div>
+      </section>
+
+      <!-- Onglet Biais -->
+      <section id="tab-biais" class="tab-panel">
+        <h2>Biais</h2>
+        <p class="hint">Calculez la longueur de biais nécessaire ou la taille du carré de tissu.</p>
+        <div class="form-group">
+          <label>Longueur de biais nécessaire (cm)</label>
+          <input type="number" id="biais-longueur" value="200">
+        </div>
+        <div class="form-group">
+          <label>Largeur du biais à couper (cm)</label>
+          <input type="number" id="biais-largeur" value="4" step="0.5">
+        </div>
+        <div class="form-group">
+          <label>Perte d'assemblage (%)</label>
+          <input type="number" id="biais-perte" value="8" min="0" max="20">
+        </div>
+        <button class="btn" id="btn-calc-biais">Calculer</button>
+        <div id="result-biais" class="result-box"></div>
+      </section>
+
+      <!-- Onglet Plis -->
+      <section id="tab-plis" class="tab-panel">
+        <h2>Plis</h2>
+        <p class="hint">Calculez le nombre de plis et leur profondeur pour une jupe plissée.</p>
+        <div class="form-group">
+          <label>Tour de hanches + aisance (cm)</label>
+          <input type="number" id="plis-hanches" value="100">
+        </div>
+        <div class="form-group">
+          <label>Largeur totale du tissu (cm)</label>
+          <input type="number" id="plis-tissu" value="200">
+        </div>
+        <div class="form-group">
+          <label>Largeur d'un pli (cm)</label>
+          <input type="number" id="plis-largeur" value="4">
+        </div>
+        <button class="btn" id="btn-calc-plis">Calculer</button>
+        <div id="result-plis" class="result-box"></div>
+      </section>
+
+      <!-- Onglet Doublure -->
+      <section id="tab-doublure" class="tab-panel">
+        <h2>Doublure</h2>
+        <p class="hint">Estimez la quantité de doublure nécessaire (généralement 10 à 20 cm de moins que le tissu principal).</p>
+        <div class="form-group">
+          <label>Métrage du tissu principal (cm)</label>
+          <input type="number" id="doublure-metrage" value="200">
+        </div>
+        <div class="form-group">
+          <label>Réduction pour la doublure (cm)</label>
+          <input type="number" id="doublure-reduction" value="15">
+        </div>
+        <button class="btn" id="btn-calc-doublure">Calculer</button>
+        <div id="result-doublure" class="result-box"></div>
+      </section>
+
+      <!-- Onglet Mesures -->
+      <section id="tab-mesures" class="tab-panel">
+        <h2>Guide des mesures essentielles</h2>
+        <p class="hint">Les 7 mesures de base pour choisir une taille de patron.</p>
+        <div class="measure-grid">
+          <div class="measure-item"><strong>Tour de poitrine</strong><span>Au plus fort de la poitrine</span></div>
+          <div class="measure-item"><strong>Tour de taille</strong><span>À l'endroit le plus étroit</span></div>
+          <div class="measure-item"><strong>Tour de hanches</strong><span>Au plus fort des fesses</span></div>
+          <div class="measure-item"><strong>Carrure dos</strong><span>D'une épaule à l'autre</span></div>
+          <div class="measure-item"><strong>Longueur de manche</strong><span>De l'épaule au poignet</span></div>
+          <div class="measure-item"><strong>Longueur dos</strong><span>De la nuque à la taille</span></div>
+          <div class="measure-item"><strong>Entrejambe</strong><span>De l'entrejambe à la cheville</span></div>
+        </div>
+        <p class="hint" style="margin-top:15px;">Pour une taille précise, comparez vos mesures au tableau du patron[reference:3]. En cas d'écart important entre poitrine et hanches, une toile d'essai est recommandée.</p>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="./script.js" defer></script>
+</body>
+</html>
